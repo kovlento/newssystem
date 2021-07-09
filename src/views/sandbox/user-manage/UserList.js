@@ -97,11 +97,29 @@ export default function UserList() {
     },
   ]
 
+  const { roleId, region, username } = JSON.parse(localStorage.getItem('token'))
+
   useEffect(() => {
+    const roleObj = {
+      1: 'superadmin',
+      2: 'admin',
+      3: 'editor',
+    }
     axios.get('http://localhost:5000/users?_expand=role').then((res) => {
-      setDataSource(res.data)
+      const list = res.data
+      setDataSource(
+        roleObj[roleId] === 'superadmin'
+          ? list
+          : [
+              ...list.filter((item) => item.username === username),
+              ...list.filter(
+                (item) =>
+                  item.region === region && roleObj[item.roleId] === 'editor'
+              ),
+            ]
+      )
     })
-  }, [])
+  }, [roleId, region, username])
 
   useEffect(() => {
     axios.get('http://localhost:5000/regions').then((res) => {
@@ -265,6 +283,7 @@ export default function UserList() {
           roleList={roleList}
           ref={updateForm}
           isUpdateDisable={isUpdateDisable}
+          isUpdate={true}
         ></UserForm>
       </Modal>
     </div>

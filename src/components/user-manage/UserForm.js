@@ -17,6 +17,44 @@ const UserForm = forwardRef((props, ref) => {
     },
   ]
 
+  const { roleId, region } = JSON.parse(localStorage.getItem('token'))
+  const roleObj = {
+    1: 'superadmin',
+    2: 'admin',
+    3: 'editor',
+  }
+  const checkRegionDisable = (item) => {
+    if (props.isUpdate) {
+      if (roleObj[roleId] === 'superadmin') {
+        return false
+      } else {
+        return true
+      }
+    } else {
+      if (roleObj[roleId] === 'superadmin') {
+        return false
+      } else {
+        return item.value !== region
+      }
+    }
+  }
+
+  const checkRoleDisable = (item) => {
+    if (props.isUpdate) {
+      if (roleObj[roleId] === 'superadmin') {
+        return false
+      } else {
+        return true
+      }
+    } else {
+      if (roleObj[roleId] === 'superadmin') {
+        return false
+      } else {
+        return roleObj[item.id] !== 'editor'
+      }
+    }
+  }
+
   return (
     <Form ref={ref} layout="vertical">
       <Form.Item name="username" label="用户名" rules={rules}>
@@ -28,7 +66,11 @@ const UserForm = forwardRef((props, ref) => {
       <Form.Item name="region" label="区域" rules={isDisable ? [] : rules}>
         <Select allowClear disabled={isDisable}>
           {props.regionList.map((item) => (
-            <Option value={item.value} key={item.id}>
+            <Option
+              value={item.value}
+              key={item.id}
+              disabled={checkRegionDisable(item)}
+            >
               {item.title}
             </Option>
           ))}
@@ -47,7 +89,11 @@ const UserForm = forwardRef((props, ref) => {
           }}
         >
           {props.roleList.map((item) => (
-            <Option value={item.id} key={item.id}>
+            <Option
+              value={item.id}
+              key={item.id}
+              disabled={checkRoleDisable(item)}
+            >
               {item.roleName}
             </Option>
           ))}
