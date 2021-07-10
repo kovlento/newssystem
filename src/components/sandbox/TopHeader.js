@@ -45,7 +45,7 @@ const TopHeader = (props) => {
       )}
       <div style={{ float: 'right' }}>
         <span>
-          欢迎 <b style={{ fontSize: '16px', color: '#1890ff' }}>{username}</b>
+          欢迎 <b style={{ color: '#1890ff' }}>{username}</b>
         </span>
         <Dropdown overlay={menu}>
           <Avatar size="large" icon={<UserOutlined />} />

@@ -67,7 +67,7 @@ export default function RightList() {
   ]
 
   useEffect(() => {
-    axios.get('http://localhost:5000/rights?_embed=children').then((res) => {
+    axios.get('/rights?_embed=children').then((res) => {
       const list = res.data
       list.forEach((item) => {
         if (item.children.length === 0) {
@@ -83,7 +83,7 @@ export default function RightList() {
     setDataSource([...dataSource])
     if (item.grade === 1) {
       axios
-        .patch(`http://localhost:5000/rights/${item.id}`, {
+        .patch(`/rights/${item.id}`, {
           pagepermisson: item.pagepermisson,
         })
         .then((res) => {
@@ -91,7 +91,7 @@ export default function RightList() {
         })
     } else if (item.grade === 2) {
       axios
-        .patch(`http://localhost:5000/children/${item.id}`, {
+        .patch(`/children/${item.id}`, {
           pagepermisson: item.pagepermisson,
         })
         .then((res) => {
@@ -120,14 +120,14 @@ export default function RightList() {
     console.log(item)
     if (item.grade === 1) {
       setDataSource(dataSource.filter((data) => data.id !== item.id))
-      axios.delete(`http://localhost:5000/rights/${item.id}`).then((res) => {
+      axios.delete(`/rights/${item.id}`).then((res) => {
         message.success('删除成功！')
       })
     } else if (item.grade === 2) {
       let list = dataSource.filter((data) => data.id === item.rightId)
       list[0].children = list[0].children.filter((data) => data.id !== item.id)
       setDataSource([...dataSource])
-      axios.delete(`http://localhost:5000/children/${item.id}`).then((res) => {
+      axios.delete(`/children/${item.id}`).then((res) => {
         message.success('删除成功！')
       })
     }

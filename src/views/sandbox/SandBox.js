@@ -1,12 +1,9 @@
-import React from 'react'
-import { Route, Switch, Redirect } from 'react-router-dom'
+import React, { useEffect } from 'react'
 import SideMenu from '../../components/sandbox/SideMenu'
 import TopHeader from '../../components/sandbox/TopHeader'
-import Home from './home/Home'
-import UserList from './user-manage/UserList'
-import RoleList from './right-manage/RoleList'
-import RightList from './right-manage/RightList'
-import NoPermission from './nopermission/NoPermission'
+import NewsRouter from '../../components/sandbox/NewsRouter'
+import Nprogress from 'nprogress'
+import 'nprogress/nprogress.css'
 
 import { Layout } from 'antd'
 import './SandBox.css'
@@ -14,12 +11,15 @@ import './SandBox.css'
 const { Content } = Layout
 
 export default function SandBox() {
+  Nprogress.start()
+  useEffect(() => {
+    Nprogress.done()
+  })
   return (
     <Layout>
       <SideMenu></SideMenu>
       <Layout className="site-layout">
         <TopHeader></TopHeader>
-
         <Content
           className="site-layout-background"
           style={{
@@ -29,14 +29,7 @@ export default function SandBox() {
             overflow: 'auto',
           }}
         >
-          <Switch>
-            <Route path="/home" component={Home} />
-            <Route path="/user-manage/list" component={UserList} />
-            <Route path="/right-manage/role/list" component={RoleList} />
-            <Route path="/right-manage/right/list" component={RightList} />
-            <Redirect from="/" to="/home" exact />
-            <Route path="*" component={NoPermission} />
-          </Switch>
+          <NewsRouter></NewsRouter>
         </Content>
       </Layout>
     </Layout>

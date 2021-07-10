@@ -55,13 +55,13 @@ export default function RoleList() {
   ]
 
   useEffect(() => {
-    axios.get('http://localhost:5000/roles').then((res) => {
+    axios.get('/roles').then((res) => {
       setDataSource(res.data)
     })
   }, [])
 
   useEffect(() => {
-    axios.get('http://localhost:5000/rights?_embed=children').then((res) => {
+    axios.get('/rights?_embed=children').then((res) => {
       setRightList(res.data)
     })
   }, [])
@@ -84,7 +84,7 @@ export default function RoleList() {
 
   const deleteOk = (item) => {
     setDataSource(dataSource.filter((data) => data.id !== item.id))
-    axios.delete(`http://localhost:5000/roles/${item.id}`).then((res) => {
+    axios.delete(`/roles/${item.id}`).then((res) => {
       message.success('删除成功！')
     })
   }
@@ -100,7 +100,7 @@ export default function RoleList() {
       })
     )
     axios
-      .patch(`http://localhost:5000/roles/${currentId}`, {
+      .patch(`/roles/${currentId}`, {
         rights: currentList,
       })
       .then((res) => {

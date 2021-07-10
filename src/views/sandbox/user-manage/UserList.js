@@ -105,7 +105,7 @@ export default function UserList() {
       2: 'admin',
       3: 'editor',
     }
-    axios.get('http://localhost:5000/users?_expand=role').then((res) => {
+    axios.get('/users?_expand=role').then((res) => {
       const list = res.data
       setDataSource(
         roleObj[roleId] === 'superadmin'
@@ -122,13 +122,13 @@ export default function UserList() {
   }, [roleId, region, username])
 
   useEffect(() => {
-    axios.get('http://localhost:5000/regions').then((res) => {
+    axios.get('/regions').then((res) => {
       setRegionList(res.data)
     })
   }, [])
 
   useEffect(() => {
-    axios.get('http://localhost:5000/roles').then((res) => {
+    axios.get('/roles').then((res) => {
       setRoleList(res.data)
     })
   }, [])
@@ -137,7 +137,7 @@ export default function UserList() {
     item.roleState = !item.roleState
     setDataSource([...dataSource])
     axios
-      .patch(`http://localhost:5000/users/${item.id}`, {
+      .patch(`/users/${item.id}`, {
         roleState: item.roleState,
       })
       .then(() => {
@@ -176,7 +176,7 @@ export default function UserList() {
 
   const deleteOk = (item) => {
     setDataSource(dataSource.filter((data) => data.id !== item.id))
-    axios.delete(`http://localhost:5000/users/${item.id}`).then((res) => {
+    axios.delete(`/users/${item.id}`).then((res) => {
       message.success('删除成功！')
     })
   }
@@ -191,7 +191,7 @@ export default function UserList() {
         setVisible(false)
         addForm.current.resetFields()
         axios
-          .post(`http://localhost:5000/users`, {
+          .post(`/users`, {
             ...value,
             roleState: true,
             default: false,
@@ -229,11 +229,9 @@ export default function UserList() {
           })
         )
         setIsUpdateDisable(!isUpdateDisable)
-        axios
-          .patch(`http://localhost:5000/users/${updateCurrent.id}`, value)
-          .then((res) => {
-            message.success('更新成功！')
-          })
+        axios.patch(`/users/${updateCurrent.id}`, value).then((res) => {
+          message.success('更新成功！')
+        })
       })
       .catch((err) => {
         console.log(err)
