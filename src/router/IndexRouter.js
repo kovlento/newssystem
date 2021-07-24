@@ -4,8 +4,6 @@ import Login from '../views/login/Login'
 import SandBox from '../views/sandbox/SandBox'
 
 export default function indexRouter() {
-  const token = localStorage.getItem('token')
-  console.log(token)
   return (
     <HashRouter>
       <Switch>
@@ -14,7 +12,11 @@ export default function indexRouter() {
         <Route
           path="/"
           render={() =>
-            token ? <SandBox></SandBox> : <Redirect to="/login/" />
+            localStorage.getItem('token') ? (
+              <SandBox></SandBox>
+            ) : (
+              <Redirect to="/login/" />
+            )
           }
         />
       </Switch>

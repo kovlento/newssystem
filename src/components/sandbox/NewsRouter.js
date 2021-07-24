@@ -8,6 +8,8 @@ import NoPermission from '../../views/sandbox/nopermission/NoPermission'
 import NewsAdd from '../../views/sandbox/news-manage/NewsAdd'
 import NewsDraft from '../../views/sandbox/news-manage/NewsDraft'
 import NewsCategory from '../../views/sandbox/news-manage/NewsCategory'
+import NewsPreview from '../../views/sandbox/news-manage/NewsPreview'
+import NewsUpdate from '../../views/sandbox/news-manage/NewsUpdate'
 import Audit from '../../views/sandbox/audit-manage/Audit'
 import AuditList from '../../views/sandbox/audit-manage/AuditList'
 import Unpublished from '../../views/sandbox/publish-manage/Unpublished'
@@ -23,6 +25,8 @@ const LocalRouterMap = {
   '/news-manage/add': NewsAdd,
   '/news-manage/draft': NewsDraft,
   '/news-manage/category': NewsCategory,
+  '/news-manage/preview/:id': NewsPreview,
+  '/news-manage/update/:id': NewsUpdate,
   '/audit-manage/audit': Audit,
   '/audit-manage/list': AuditList,
   '/publish-manage/unpublished': Unpublished,
@@ -43,7 +47,9 @@ export default function NewsRouter() {
   } = JSON.parse(localStorage.getItem('token'))
 
   const checkRoute = (item) => {
-    return LocalRouterMap[item.key] && item.pagepermisson === 1
+    return (
+      LocalRouterMap[item.key] && (item.pagepermisson || item.routepermisson)
+    )
   }
   const checkUserPermission = (item) => {
     return rights.includes(item.key)

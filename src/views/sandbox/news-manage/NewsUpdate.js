@@ -7,13 +7,11 @@ import NewsEditor from '../../../components/news-manage/NewsEditor'
 
 const { Step } = Steps
 const { Option } = Select
-export default function NewsAdd(props) {
+export default function NewsUpdate(props) {
   const [current, setCurrent] = useState(0)
   const [categoryList, setCategoryList] = useState([])
   const [formInfo, setFormInfo] = useState({})
   const [content, setContent] = useState('')
-
-  const user = JSON.parse(localStorage.getItem('token'))
 
   const handleNext = () => {
     if (current === 0) {
@@ -51,19 +49,25 @@ export default function NewsAdd(props) {
     })
   }, [])
 
+  useEffect(() => {
+    axios
+      .get(`/news/${props.match.params.id}?_expand=category&_expand=role`)
+      .then((res) => {
+        const { title, categoryId, content } = res.data
+        NewsForm.current.setFieldsValue({
+          title,
+          categoryId,
+        })
+        setContent(content)
+      })
+  }, [props.match.params.id])
+
   const handleSave = (auditState) => {
     axios
-      .post('/news', {
+      .patch(`/news/${props.match.params.id}`, {
         ...formInfo,
         content,
-        region: user.region ? user.region : '全球',
-        author: user.username,
-        roleId: user.roleId,
         auditState: auditState,
-        publishState: 0,
-        createTime: Date.now(),
-        star: 0,
-        view: 0,
       })
       .then((res) => {
         props.history.push(
@@ -81,7 +85,11 @@ export default function NewsAdd(props) {
 
   return (
     <div>
-      <PageHeader className="site-page-header" title="撰写新闻" />
+      <PageHeader
+        className="site-page-header"
+        title="更新新闻"
+        onBack={() => props.history.goBack()}
+      />
       <Steps current={current}>
         <Step title="基本信息" description="新闻标题，新闻分类" />
         <Step title="新闻内容" description="新闻主体内容" />
@@ -119,6 +127,7 @@ export default function NewsAdd(props) {
           getContent={(value) => {
             setContent(value)
           }}
+          content={content}
         ></NewsEditor>
       </div>
       <div className={current === 2 ? '' : style.hidden}></div>
