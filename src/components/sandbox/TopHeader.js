@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Layout, Menu, Dropdown, Avatar } from 'antd'
 import {
   MenuUnfoldOutlined,
@@ -11,10 +11,8 @@ import { connect } from 'react-redux'
 const { Header } = Layout
 
 const TopHeader = (props) => {
-  const [collapsed, setCollapsed] = useState(false)
-  console.log(props)
   const changeCollapsed = () => {
-    setCollapsed(!collapsed)
+    props.changeCollapsed()
   }
 
   const {
@@ -39,7 +37,7 @@ const TopHeader = (props) => {
 
   return (
     <Header className="site-layout-background" style={{ padding: '0 16px' }}>
-      {collapsed ? (
+      {props.isCollapsed ? (
         <MenuUnfoldOutlined onClick={changeCollapsed} />
       ) : (
         <MenuFoldOutlined onClick={changeCollapsed} />
@@ -56,10 +54,21 @@ const TopHeader = (props) => {
   )
 }
 
-const mapStateTopProps = ({ CollApsedReducer: { isCollapsed } }) => {
+const mapStateToProps = ({ CollApsedReducer: { isCollapsed } }) => {
   return {
     isCollapsed,
   }
 }
 
-export default connect(mapStateTopProps)(withRouter(TopHeader))
+const mapDispatchToProps = {
+  changeCollapsed() {
+    return {
+      type: 'change_collapsed',
+    }
+  },
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withRouter(TopHeader))

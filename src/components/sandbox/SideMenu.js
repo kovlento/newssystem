@@ -9,6 +9,7 @@ import {
   SendOutlined,
 } from '@ant-design/icons'
 import { withRouter } from 'react-router-dom'
+import { connect } from 'react-redux'
 import axios from 'axios'
 
 import './index.scss'
@@ -81,7 +82,7 @@ function SideMenu(props) {
   const openKey = ['/' + props.location.pathname.split('/')[1]]
 
   return (
-    <Sider trigger={null} collapsible>
+    <Sider trigger={null} collapsible collapsed={props.isCollapsed}>
       <div style={{ display: 'flex', height: '100%', flexDirection: 'column' }}>
         <div className="logo">全球新闻发布管理系统</div>
         <div style={{ flex: 1, overflow: 'auto' }}>
@@ -99,4 +100,7 @@ function SideMenu(props) {
   )
 }
 
-export default withRouter(SideMenu)
+const mapStateToProps = ({ CollApsedReducer: { isCollapsed } }) => ({
+  isCollapsed,
+})
+export default connect(mapStateToProps)(withRouter(SideMenu))
