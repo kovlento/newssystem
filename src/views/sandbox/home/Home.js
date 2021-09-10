@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Card, Col, Row, List, Avatar } from 'antd'
+import { Card, Col, Row, List, Avatar, Drawer } from 'antd'
 import {
   EditOutlined,
   EllipsisOutlined,
@@ -14,7 +14,11 @@ const { Meta } = Card
 export default function Home() {
   const [viewList, setViewList] = useState([])
   const [starList, setStarList] = useState([])
+  const [allList, setAllList] = useState([])
+  const [pieChart, setPieChart] = useState(null)
+  const [visible, setVisible] = useState(false)
   const barRef = useRef()
+  const pieRef = useRef()
 
   useEffect(() => {
     axios
@@ -39,6 +43,7 @@ export default function Home() {
   useEffect(() => {
     axios.get(`/news?publishState=2&_expand=category`).then((res) => {
       renderBarView(_.groupBy(res.data, (item) => item.category.title))
+      setAllList(res.data)
     })
     return () => {
       window.onresize = null
@@ -87,6 +92,58 @@ export default function Home() {
     }
   }
 
+  const renderPieView = (obj) => {
+    let currentList = allList.filter((item) => item.author === username)
+    let groupObj = _.groupBy(currentList, (item) => item.category.title)
+
+    let list = []
+    for (const i in groupObj) {
+      list.push({
+        name: i,
+        value: groupObj[i].length,
+      })
+    }
+
+    let myChart
+    if (!pieChart) {
+      myChart = Echarts.init(pieRef.current)
+      setPieChart(myChart)
+    } else {
+      myChart = pieChart
+    }
+    let option
+    option = {
+      title: {
+        text: '当前用户新闻分类图示',
+        left: 'center',
+      },
+      tooltip: {
+        trigger: 'item',
+      },
+      legend: {
+        orient: 'vertical',
+        left: 'left',
+      },
+      series: [
+        {
+          name: '发布数量',
+          type: 'pie',
+          radius: '50%',
+          data: list,
+          emphasis: {
+            itemStyle: {
+              shadowBlur: 10,
+              shadowOffsetX: 0,
+              shadowColor: 'rgba(0, 0, 0, 0.5)',
+            },
+          },
+        },
+      ],
+    }
+
+    option && myChart.setOption(option)
+  }
+
   const {
     username,
     region,
@@ -129,7 +186,15 @@ export default function Home() {
               />
             }
             actions={[
-              <SettingOutlined key="setting" />,
+              <SettingOutlined
+                key="setting"
+                onClick={() => {
+                  setTimeout(() => {
+                    setVisible(true)
+                    renderPieView()
+                  }, 0)
+                }}
+              />,
               <EditOutlined key="edit" />,
               <EllipsisOutlined key="ellipsis" />,
             ]}
@@ -149,7 +214,24 @@ export default function Home() {
           </Card>
         </Col>
       </Row>
-
+      <Drawer
+        width="800px"
+        title="个人新闻分类"
+        placement="right"
+        onClose={() => {
+          setVisible(false)
+        }}
+        visible={visible}
+      >
+        <div
+          ref={pieRef}
+          style={{
+            width: '100%',
+            height: '400px',
+            marginTop: '30px',
+          }}
+        ></div>
+      </Drawer>
       <div
         ref={barRef}
         style={{
